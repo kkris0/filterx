@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*
+.dev.vars
+.wrangler/
+*.zip
+.DS_Store
+.playwright-mcp/
+
+# screenshots of third-party posts, used by scripts/smoke.ts locally
+scripts/fixtures/

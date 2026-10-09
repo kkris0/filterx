@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>filterx settings</title>
+    <link rel="stylesheet" href="ui.css" />
+    <style>
+      main {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+      .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .top .brand {
+        font-size: 22px;
+      }
+      .lede {
+        margin: 0 0 32px;
+        color: var(--muted);
+      }
+      section {
+        padding: 24px 0;
+        border-top: 1px solid var(--line);
+      }
+      section > h2 {
+        font-size: 17px;
+        margin-bottom: 4px;
+      }
+      section > p {
+        margin: 0 0 16px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .field > span {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .field small {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .toggle-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 0;
+      }
+      .toggle-row + .toggle-row {
+        border-top: 1px solid #16181a;
+      }
+      .toggle-row b {
+        display: block;
+        font-size: 14px;
+      }
+      .toggle-row small {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .seg {
+        max-width: 320px;
+        margin-bottom: 16px;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      #test-result {
+        font-size: 13px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        white-space: pre-wrap;
+        color: var(--muted);
+        margin-top: 12px;
+      }
+      #test-result.ok {
+        color: var(--green);
+      }
+      #test-result.err {
+        color: var(--pink);
+      }
+      .votes {
+        margin-top: 16px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .vote {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 8px 8px 8px 12px;
+        font-size: 13px;
+      }
+      .vote + .vote {
+        border-top: 1px solid var(--line);
+      }
+      .vote-text {
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: #c4c7c9;
+      }
+      .saved {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translate(-50%, 12px);
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: #fff;
+        font-weight: 600;
+        font-size: 13px;
+        opacity: 0;
+        transition: opacity 0.2s, transform 0.2s;
+        pointer-events: none;
+      }
+      .saved.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+      .learn-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+      .learn-head .btn {
+        flex: none;
+        white-space: nowrap;
+      }
+      #learn-status {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      #learn-status.running {
+        color: var(--text);
+      }
+      #learn-status.running::before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-right: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: pulse 1s ease-in-out infinite;
+      }
+      #learn-status.err {
+        color: var(--pink);
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.25;
+        }
+      }
+      .rules {
+        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .rule {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto;
+        gap: 12px;
+        align-items: start;
+        padding: 12px 8px 12px 14px;
+      }
+      .rule + .rule {
+        border-top: 1px solid var(--line);
+      }
+      .rule.off {
+        opacity: 0.45;
+      }
+      .rule .chip {
+        margin-top: 2px;
+      }
+      .rule b {
+        display: block;
+        font-size: 14px;
+      }
+      .rule-text {
+        font-size: 13px;
+        color: #c4c7c9;
+      }
+      .rule-meta {
+        margin-top: 4px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .rule .switch {
+        margin-top: 2px;
+      }
+      .add-rule {
+        display: grid;
+        grid-template-columns: 150px 1fr auto;
+        gap: 8px;
+        align-items: center;
+        margin-top: 12px;
+      }
+      .add-rule .seg {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="top">
+        <div class="brand"><span class="brand-mark"></span>filterx</div>
+        <label class="switch" title="Filtering on/off"><input type="checkbox" id="enabled" /></label>
+      </div>
+      <p class="lede">Your X feed, minus the noise. Classified by Cloudflare Clef, tuned by your 👍 and 👎.</p>
+
+      <section>
+        <h2>Connection</h2>
+        <p>A Worker keeps your Cloudflare token off the browser. Direct mode calls the Workers AI REST API with an API token.</p>
+        <div class="seg" id="mode">
+          <button data-v="worker">Worker</button>
+          <button data-v="direct">Direct API</button>
+        </div>
+        <div id="worker-fields">
+          <label class="field"
+            ><span>Worker URL</span><input type="url" id="workerUrl" placeholder="https://filterx.you.workers.dev"
+          /></label>
+          <label class="field"
+            ><span>Shared secret</span><input type="password" id="secret" autocomplete="off" />
+            <small>Same value as the Worker's FILTERX_SECRET.</small></label
+          >
+        </div>
+        <div id="direct-fields">
+          <label class="field"><span>Account ID</span><input type="text" id="accountId" autocomplete="off" /></label>
+          <label class="field"
+            ><span>API token</span><input type="password" id="apiToken" autocomplete="off" />
+            <small>Needs the Workers AI: Read permission. Stored only in this browser profile.</small></label
+          >
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="test">Test connection</button>
+        </div>
+        <div id="test-result"></div>
+      </section>
+
+      <section>
+        <h2>Model</h2>
+        <p>Clef is the most accurate on nuanced calls like politics. Flash is faster but misses more.</p>
+        <div class="seg" id="model">
+          <button data-v="clef">Clef 27B</button>
+          <button data-v="clef-flash">Clef Flash</button>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <b>Look at images and video thumbnails</b><small>Catches memes and screenshot bait. Adds ~100ms per post.</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="analyzeImages" /></label>
+        </div>
+      </section>
+
+      <section>
+        <h2>What to hide</h2>
+        <p>Each category is a separate question to Clef. Your votes then reweigh how much each one matters to you.</p>
+        <div id="categories"></div>
+      </section>
+
+      <section>
+        <h2>Learned rules</h2>
+        <p>
+          filterx studies your votes, writes rules for the patterns it finds, and keeps only the ones that hold up on
+          your own votes. Each rule becomes its own question to Clef on every post.
+        </p>
+        <div class="learn-head">
+          <div id="learn-status"></div>
+          <button class="btn primary" id="learn-now">Learn from my votes</button>
+        </div>
+        <div class="toggle-row">
+          <div><b>Learn automatically</b><small>Re-learn after every 25 new votes.</small></div>
+          <label class="switch"><input type="checkbox" id="autoLearn" /></label>
+        </div>
+        <div class="rules" id="rules"></div>
+        <form class="add-rule" id="add-rule">
+          <div class="seg" id="new-kind">
+            <button type="button" data-v="hide">Hide</button>
+            <button type="button" data-v="keep">Keep</button>
+          </div>
+          <input type="text" id="new-rule" placeholder="Add your own, e.g. crypto price speculation" />
+          <button class="btn" type="submit">Add</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Your taste</h2>
+        <p>Plain words. Sent with every post as context for the "would you want this hidden?" question.</p>
+        <textarea id="notes" rows="5"></textarea>
+      </section>
+
+      <section>
+        <h2>Teach X too</h2>
+        <div class="toggle-row">
+          <div>
+            <b>Send "Not interested" to X on 👎</b
+            ><small>Clicks X's own ⋯ → Not interested in this post, invisibly, so X's ranking learns too. Experimental, English UI only, For You feed only.</small>
+          </div>
+          <label class="switch"><input type="checkbox" id="syncNotInterested" /></label>
+        </div>
+      </section>
+
+      <section>
+        <h2>Learning</h2>
+        <p id="learn-summary"></p>
+        <div class="actions">
+          <button class="btn" id="export">Export votes</button>
+          <button class="btn" id="import">Import</button>
+          <button class="btn" id="clear-cache">Clear verdict cache</button>
+          <button class="btn danger" id="reset">Forget all votes</button>
+          <input type="file" id="import-file" accept="application/json" hidden />
+        </div>
+        <div class="votes" id="votes"></div>
+      </section>
+    </main>
+    <div class="saved" id="saved">Saved</div>
+    <script src="options.js"></script>
+  </body>
+</html>

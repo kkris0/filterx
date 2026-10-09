@@ -1,0 +1,17 @@
+{
+  "name": "filterx-extension",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun build.ts",
+    "dev": "bun build.ts --watch",
+    "typecheck": "tsc --noEmit",
+    "icons": "bun scripts/icons.ts",
+    "zip": "bun build.ts && cd dist && zip -qr ../filterx.zip ."
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/chrome": "latest",
+    "typescript": "^5.9.0"
+  }
+}

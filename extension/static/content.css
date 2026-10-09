@@ -1,0 +1,224 @@
+/* filterx: everything injected into x.com. Matches X's own palette per theme. */
+
+html {
+  --fx-muted: rgb(113, 118, 123);
+  --fx-text: rgb(231, 233, 234);
+  --fx-border: rgb(47, 51, 54);
+  --fx-hover: rgba(231, 233, 234, 0.07);
+  --fx-green: rgb(0, 186, 124);
+  --fx-pink: rgb(249, 24, 128);
+}
+html[data-fx-theme="dim"] {
+  --fx-muted: rgb(139, 152, 165);
+  --fx-text: rgb(247, 249, 249);
+  --fx-border: rgb(56, 68, 77);
+  --fx-hover: rgba(247, 249, 249, 0.07);
+}
+html[data-fx-theme="light"] {
+  --fx-muted: rgb(83, 100, 113);
+  --fx-text: rgb(15, 20, 25);
+  --fx-border: rgb(207, 217, 222);
+  --fx-hover: rgba(15, 20, 25, 0.06);
+}
+
+/* ---- hidden / dimmed posts ------------------------------------------- */
+
+article[data-fx-state="hidden"],
+[data-fx-removed] {
+  display: none !important;
+}
+
+/* A verdict that lands while the post is on screen dims it rather than
+   collapsing it under the reader. Hover to read it anyway. */
+article[data-fx-state="soft"] {
+  opacity: 0.28;
+  transition: opacity 0.4s ease;
+}
+article[data-fx-state="soft"]:hover {
+  opacity: 1;
+  transition-duration: 0.15s;
+}
+
+/* ---- the slim bar that replaces a hidden post ------------------------- */
+
+.fx-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px 0 0;
+  font: 400 13px/16px TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--fx-muted);
+  cursor: default;
+  user-select: none;
+  animation: fx-in 0.2s ease-out;
+}
+.fx-bar-dot {
+  flex: none;
+  width: 40px;
+  margin-left: calc(var(--fx-indent, 36px) - 20px);
+  display: grid;
+  place-items: center;
+}
+.fx-bar-dot::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+}
+.fx-bar[data-user] .fx-bar-dot::before {
+  background: var(--fx-pink);
+  opacity: 0.8;
+}
+.fx-bar-text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: color 0.15s;
+}
+.fx-bar:hover .fx-bar-text {
+  color: var(--fx-text);
+}
+.fx-bar-spacer {
+  flex: 1;
+}
+.fx-bar-btn {
+  all: unset;
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--fx-text);
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+.fx-bar .fx-vote {
+  opacity: 0;
+}
+.fx-bar:hover .fx-bar-btn,
+.fx-bar:hover .fx-vote,
+.fx-bar:focus-within .fx-bar-btn,
+.fx-bar:focus-within .fx-vote {
+  opacity: 1;
+}
+.fx-bar-btn:hover {
+  background: var(--fx-hover);
+}
+.fx-bar-btn:focus-visible,
+.fx-vote:focus-visible {
+  outline: 2px solid rgb(29, 155, 240);
+  outline-offset: 1px;
+}
+
+/* ---- vote buttons next to the timestamp ------------------------------- */
+
+.fx-slot {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin-left: 6px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+article:hover .fx-slot,
+.fx-slot:focus-within,
+.fx-slot[data-filtered] {
+  opacity: 1;
+}
+.fx-slot[data-vote] {
+  opacity: 0.6;
+}
+article:hover .fx-slot[data-vote] {
+  opacity: 1;
+}
+
+.fx-vote {
+  all: unset;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--fx-muted);
+  cursor: pointer;
+  transition: color 0.12s, background-color 0.12s, opacity 0.15s, transform 0.12s;
+}
+.fx-vote svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fx-vote:active {
+  transform: scale(0.88);
+}
+.fx-up:hover {
+  color: var(--fx-green);
+  background: rgba(0, 186, 124, 0.1);
+}
+.fx-down:hover {
+  color: var(--fx-pink);
+  background: rgba(249, 24, 128, 0.1);
+}
+.fx-slot[data-vote="keep"] .fx-up {
+  color: var(--fx-green);
+}
+.fx-slot[data-vote="hide"] .fx-down {
+  color: var(--fx-pink);
+}
+.fx-slot[data-vote="keep"] .fx-up svg,
+.fx-slot[data-vote="hide"] .fx-down svg {
+  fill: currentColor;
+  fill-opacity: 0.25;
+}
+
+.fx-chip {
+  display: none;
+  margin-right: 2px;
+  padding: 1px 8px;
+  border: 1px solid var(--fx-border);
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--fx-muted);
+  white-space: nowrap;
+}
+.fx-slot[data-filtered] .fx-chip {
+  display: inline-block;
+}
+
+/* Still being classified: a tiny dot, only noticeable on hover. */
+.fx-slot[data-pending]::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  margin: 0 6px;
+  border-radius: 50%;
+  background: var(--fx-muted);
+  animation: fx-pulse 1.1s ease-in-out infinite;
+}
+
+/* While driving X's "Not interested" menu, keep it invisible. */
+html.fx-automating [role="menu"],
+html.fx-automating [data-testid="Dropdown"] {
+  opacity: 0 !important;
+}
+
+@keyframes fx-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fx-pulse {
+  50% {
+    opacity: 0.2;
+  }
+}

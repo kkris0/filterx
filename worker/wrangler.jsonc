@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "filterx",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "ai": { "binding": "AI" },
+  "observability": { "enabled": true }
+  // Secret: `wrangler secret put FILTERX_SECRET` (any long random string; paste the same into the extension).
+}
